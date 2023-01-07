@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using NZWalk.API.Models.Domain;
 using NZWalk.API.Models.ResponseDTO;
+using NZWalk.API.Models.RequestsDTO;
 using NZWalk.API.Repositories;
+using System.Runtime.ConstrainedExecution;
 
 namespace NZWalk.API.Controllers
 {
@@ -56,8 +58,87 @@ namespace NZWalk.API.Controllers
             //    regionsResponse.Add(regionResponse);
             //}
 
-            var regionsResponse = mapper.Map<List<Region>>(regionsData);
+            var regionsResponse = mapper.Map<List<RegionResponse>>(regionsData);
             return Ok(regionsResponse);
+        }
+
+
+        [HttpGet]
+        [Route("{id:guid}")]  //validation: id must be a guid
+        [ActionName("GetRegionByIdAsync")] //action to pass its url anywhere
+        public async Task<IActionResult> GetRegionByIdAsync(Guid id)
+        {
+            try
+            {
+                var region = await regionRepository.GetRegionAsync(id);
+                if(region == null) return NotFound();
+                var regionResponse = mapper.Map<RegionResponse>(region);
+                return Ok(regionResponse);
+            }
+            catch(Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Sorry, server down!");
+            }
+            
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddRegionAsync(RegionRequest addRegionRequest) //post request body parameters with auto validation by .net and automatic mapping to RegionRequst object from json format
+        {
+            try
+            {
+                var region=mapper.Map<Region>(addRegionRequest);
+                var addedRegion = await regionRepository.AddRegionAsync(region); //returning me model after adding data to database, need to convert back it into response
+                var regionResponse=mapper.Map<RegionResponse>(addedRegion);
+                return CreatedAtAction(nameof(GetRegionByIdAsync), new {id=regionResponse.Id}, regionResponse); //control wont come to this return until await completed
+            }
+            catch(Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Sorry server down");
+            }
+        }
+
+        [HttpDelete]
+        [Route("{id:guid}")]
+        public async Task<IActionResult> DeleteRegionAsync(Guid id)
+        {
+            try
+            {
+                var region=await regionRepository.DeleteRegionAsync(id);
+                if(region == null)
+                {
+                    return NotFound();
+                }
+                var regionResponse = mapper.Map<RegionResponse>(region);
+                return Ok(regionResponse);
+            }
+            catch
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "server down");
+            }
+        }
+
+        [HttpPut]
+        [Route("{id:guid}")]
+        public async Task<IActionResult> UpdateRegionAsync(Guid id, RegionRequest updateRegionRequest)
+        {
+            //we can also try by deleting old and adding new
+            //call repository functions delete and add
+            try
+            {
+                var region = mapper.Map<Region>(updateRegionRequest);
+                var updateRegionResponse = await regionRepository.UpdateRegionAsync(id,region);
+                if(updateRegionResponse == null)
+                {
+                    return NotFound();
+                }
+                var regionResponse = mapper.Map<RegionResponse>(updateRegionResponse);
+                return CreatedAtAction(nameof(GetRegionByIdAsync),new { id = regionResponse.Id }, regionResponse);
+            }
+            catch
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "server down");
+            }
         }
 
 

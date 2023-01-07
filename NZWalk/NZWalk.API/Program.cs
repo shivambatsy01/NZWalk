@@ -15,10 +15,12 @@ builder.Services.AddDbContext<NZWalksDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("NZWalksConnectionName"));
 
 });
+//as many places we are passing nzWalksdbcontext into ctor parameters: so create a dependency injection that when it is required, .net will create it and also will return db connection string
 //dependency injected dbcontextclass into services collection : practice for Entity Framework 
 //when I as for NZwalksdbcontext, give me the connection string
 
 builder.Services.AddScoped<IRegionRepository, RegionRepository>();
+//as we are passing Iregiorepository in ctor, when it is required, it will create and return regionrepository object : concept of dependency injection
 //when I Ask for Iregionrepository, give me implementation of regionRepository
 //dependency injection
 
