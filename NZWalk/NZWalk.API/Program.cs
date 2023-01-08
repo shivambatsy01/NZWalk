@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using NZWalk.API.Database;
-using NZWalk.API.Repositories;
+using NZWalk.API.Repositories.WalkRepository;
+using NZWalk.API.Repositories.WalkDifficultyRepository;
+using NZWalk.API.Repositories.RegionRepository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +25,9 @@ builder.Services.AddScoped<IRegionRepository, RegionRepository>();
 //as we are passing Iregiorepository in ctor, when it is required, it will create and return regionrepository object : concept of dependency injection
 //when I Ask for Iregionrepository, give me implementation of regionRepository
 //dependency injection
+
+builder.Services.AddScoped<IWalkRepository, WalkRepository>();
+builder.Services.AddScoped<IWalkDifficultyRepository, WalkDifficultyRepository>();
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 //dependency injection for automapper

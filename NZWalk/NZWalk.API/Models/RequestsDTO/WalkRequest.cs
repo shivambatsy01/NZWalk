@@ -1,8 +1,7 @@
-﻿namespace NZWalk.API.Models.ResponseDTO
+﻿namespace NZWalk.API.Models.RequestsDTO
 {
-    public class WalkResponse
+    public class WalkRequest
     {
-        public Guid Id { get; set; }
         public string Name { get; set; }
         public double Length { get; set; }
         public Guid RegionId { get; set; }

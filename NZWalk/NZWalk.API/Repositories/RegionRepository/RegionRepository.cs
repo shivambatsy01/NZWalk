@@ -3,7 +3,7 @@ using NZWalk.API.Database;
 using NZWalk.API.Models.Domain;
 using NZWalk.API.Models.RequestsDTO;
 
-namespace NZWalk.API.Repositories
+namespace NZWalk.API.Repositories.RegionRepository
 {
     public class RegionRepository : IRegionRepository
     {
@@ -54,11 +54,11 @@ namespace NZWalk.API.Repositories
         public async Task<Region> UpdateRegionAsync(Guid id, Region region)
         {
             var existingRegion = await nZWalksDbContext.Regions.FirstOrDefaultAsync(x => x.Id == id);
-            if(existingRegion == null)
+            if (existingRegion == null)
             {
                 return null;
             }
-            
+
             existingRegion.Name = region.Name;
             existingRegion.Walks = region.Walks;
             existingRegion.Area = region.Area;

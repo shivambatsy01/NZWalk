@@ -2,7 +2,6 @@
 using NZWalk.API.Models.Domain;
 using NZWalk.API.Models.ResponseDTO;
 using NZWalk.API.Models.RequestsDTO;
-using System.Diagnostics.CodeAnalysis;
 
 namespace NZWalk.API.Profiles
 {
@@ -10,7 +9,7 @@ namespace NZWalk.API.Profiles
     {
         public RegionsProfile()
         {
-            CreateMap<Region, RegionResponse>();  //map from model->response
+            CreateMap<Region, RegionResponse>();  //map from model->response : source -> destination
             //automapper will map itself on the basis of name
 
             //if the names are not same then we have to specify as

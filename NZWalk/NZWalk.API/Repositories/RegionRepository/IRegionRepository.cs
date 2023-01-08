@@ -1,7 +1,7 @@
 ﻿using NZWalk.API.Models.Domain;
 using NZWalk.API.Models.RequestsDTO;
 
-namespace NZWalk.API.Repositories
+namespace NZWalk.API.Repositories.RegionRepository
 {
     public interface IRegionRepository
     {

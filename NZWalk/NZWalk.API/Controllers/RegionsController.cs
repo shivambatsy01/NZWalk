@@ -4,7 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using NZWalk.API.Models.Domain;
 using NZWalk.API.Models.ResponseDTO;
 using NZWalk.API.Models.RequestsDTO;
-using NZWalk.API.Repositories;
+using NZWalk.API.Repositories.RegionRepository;
 using System.Runtime.ConstrainedExecution;
 
 namespace NZWalk.API.Controllers
