@@ -7,5 +7,10 @@
         public double Length { get; set; }
         public Guid RegionId { get; set; }
         public Guid WalkDifficultyID { get; set; }
+
+
+        //Navigation Properties
+        public RegionResponse Region { get; set; }
+        public WalkDifficultyResponse WalkDifficulty { get; set; }
     }
 }
