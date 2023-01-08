@@ -30,7 +30,7 @@ builder.Services.AddScoped<IWalkRepository, WalkRepository>();
 builder.Services.AddScoped<IWalkDifficultyRepository, WalkDifficultyRepository>();
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
-//dependency injection for automapper
+//creating object wherever required for dependency injection for automapper
 
 
 
