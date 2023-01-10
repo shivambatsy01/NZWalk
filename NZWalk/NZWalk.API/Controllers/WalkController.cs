@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using NZWalk.API.Models.Domain;
 using NZWalk.API.Models.RequestsDTO;
 using NZWalk.API.Models.ResponseDTO;
+using NZWalk.API.Repositories.RegionRepository;
+using NZWalk.API.Repositories.WalkDifficultyRepository;
 using NZWalk.API.Repositories.WalkRepository;
 
 namespace NZWalk.API.Controllers
@@ -14,10 +16,15 @@ namespace NZWalk.API.Controllers
     {
         private readonly IMapper mapper;
         private readonly IWalkRepository walkRepository;
-        public WalkController(IMapper mapper, IWalkRepository walkRepository)
+        private readonly IRegionRepository regionRepository;
+        private readonly IWalkDifficultyRepository walkDifficultyRepository;
+        public WalkController(IMapper mapper, IWalkRepository walkRepository, IRegionRepository regionRepository,
+                                IWalkDifficultyRepository walkDifficultyRepository)
         {
             this.mapper = mapper;
             this.walkRepository = walkRepository;
+            this.regionRepository = regionRepository;
+            this.walkDifficultyRepository = walkDifficultyRepository;
         }
 
 
@@ -65,6 +72,12 @@ namespace NZWalk.API.Controllers
         {
             try
             {
+                var isValid = await AddWalkRequestValidation(walkRequest);
+                if (!isValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
                 var walk = mapper.Map<Walk>(walkRequest);
                 var addedWalk = await walkRepository.AddWalkAsync(walk);
                 if(addedWalk == null)
@@ -109,6 +122,12 @@ namespace NZWalk.API.Controllers
         {
             try
             {
+                var isValid = await UpdateWalkRequestValidation(walkRequest);
+                if(!isValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
                 var walk = mapper.Map<Walk>(walkRequest);
                 var updatedWalk = await walkRepository.UpdateWalkAsync(id, walk);
                 if(updatedWalk == null)
@@ -123,6 +142,49 @@ namespace NZWalk.API.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, "Sorry, server is not responding at this moment");
             }
+        }
+
+
+
+        private async Task<bool> AddWalkRequestValidation(WalkRequest walk)
+        {
+            if(walk == null)
+            {
+                ModelState.AddModelError(nameof(walk),$"{nameof(walk)} is null.");
+            }
+
+            if (String.IsNullOrWhiteSpace(walk.Name))
+            {
+                ModelState.AddModelError(nameof(walk.Name), $"{nameof(walk.Name)} can not be empty or white space.");
+            }
+
+            if (walk.Length <= 0)
+            {
+                ModelState.AddModelError(nameof(walk), $"{nameof(walk.Length)} can not be less than or equals to zero.");
+            }
+
+            var region = await regionRepository.GetRegionAsync(walk.RegionId);
+            if(region == null)
+            {
+                ModelState.AddModelError(nameof(walk.RegionId),$"No region exist with ID: {walk.RegionId}");
+            }
+
+            var walkDifficulty = await walkDifficultyRepository.GetWalkDifficultyByIdAsync(walk.WalkDifficultyID);
+            if(walkDifficulty == null)
+            {
+                ModelState.AddModelError(nameof(walk.WalkDifficultyID), $"No Difficulty exist with ID: {walk.WalkDifficultyID}");
+            }
+
+
+            if (ModelState.ErrorCount > 0) return false;
+            return true;
+
+        }
+
+        private async Task<bool> UpdateWalkRequestValidation(WalkRequest walkRequest)
+        {
+            var isvalid = await AddWalkRequestValidation(walkRequest); //same is utilised here
+            return isvalid;
         }
 
     }

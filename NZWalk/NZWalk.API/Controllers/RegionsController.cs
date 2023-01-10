@@ -87,6 +87,11 @@ namespace NZWalk.API.Controllers
         {
             try
             {
+                if(!RegionRequestValidations(addRegionRequest))
+                {
+                    return BadRequest(ModelState);
+                }
+
                 var region=mapper.Map<Region>(addRegionRequest);
                 var addedRegion = await regionRepository.AddRegionAsync(region); //returning me model after adding data to database, need to convert back it into response
                 var regionResponse=mapper.Map<RegionResponse>(addedRegion);
@@ -126,6 +131,11 @@ namespace NZWalk.API.Controllers
             //call repository functions delete and add
             try
             {
+                if (!RegionRequestValidations(updateRegionRequest))
+                {
+                    return BadRequest(ModelState);
+                }
+
                 var region = mapper.Map<Region>(updateRegionRequest);
                 var updateRegionResponse = await regionRepository.UpdateRegionAsync(id,region);
                 if(updateRegionResponse == null)
@@ -139,6 +149,59 @@ namespace NZWalk.API.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, "server down");
             }
+        }
+
+
+
+        private bool RegionRequestValidations(RegionRequest region)
+        {
+            if(region == null)
+            {
+                ModelState.AddModelError(nameof(region),$"{nameof(region)} is not empty.");
+            }
+
+            if(String.IsNullOrWhiteSpace(region.Code))
+            {
+                ModelState.AddModelError(nameof(region.Code), $"{nameof(region.Code)} can not be empty or whitespace");
+                //or return false;
+            }
+
+            if (String.IsNullOrWhiteSpace(region.Name))
+            {
+                ModelState.AddModelError(nameof(region.Name), $"{nameof(region.Name)} can not be empty or whitespace");
+                //or return false;
+            }
+
+            if (region.Area <= 0)
+            {
+                ModelState.AddModelError(nameof(region.Area), $"{nameof(region.Area)} can not be less than or equals to 0");
+                //or return false;
+            }
+
+            if (region.Latitude < -180 || region.Latitude >= 180)
+            {
+                ModelState.AddModelError(nameof(region.Latitude), $"{nameof(region.Latitude)} not in range");
+                //or return false;
+            }
+
+            if (region.Longitude < -180 || region.Longitude >= 180)
+            {
+                ModelState.AddModelError(nameof(region.Longitude), $"{nameof(region.Longitude)} not in range");
+                //or return false;
+            }
+
+            if (region.Population < 0)
+            {
+                ModelState.AddModelError(nameof(region.Population), $"{nameof(region.Population)} can not be less than 0");
+                //or return false;
+            }
+
+            if(ModelState.ErrorCount > 0)
+            {
+                return false;
+            }
+
+            return true;
         }
 
 

@@ -65,6 +65,12 @@ namespace NZWalk.API.Controllers
         {
             try
             {
+                bool isValid = ValidateAddWalkDifficulty(difficultyRequest);
+                if(!isValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
                 var difficultyToAdd = mapper.Map<WalkDifficulty>(difficultyRequest);
                 var difficulty = await walkDifficultyRepository.AddWalkDifficultyAsync(difficultyToAdd);
                 if(difficulty == null)
@@ -109,6 +115,12 @@ namespace NZWalk.API.Controllers
         {
             try
             {
+                bool isValid = ValidateUpdateWalkDifficulty(walkDifficultyRequest);
+                if(!isValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
                 var walkDifficulty = mapper.Map<WalkDifficulty>(walkDifficultyRequest);
                 var updatedDifficulty = await walkDifficultyRepository.UpdateWalkDifficultyAsync(id, walkDifficulty);
                 if(updatedDifficulty == null)
@@ -123,6 +135,33 @@ namespace NZWalk.API.Controllers
             {
                 return StatusCode(statusCode: 500, "Server Error");
             }
+        }
+
+
+
+        private bool ValidateAddWalkDifficulty(WalkDifficultyRequest walkDifficulty)
+        {
+            if(walkDifficulty == null)
+            {
+                ModelState.AddModelError(nameof(walkDifficulty), $"{nameof(walkDifficulty)} is null.");
+            }
+
+            if(String.IsNullOrWhiteSpace(walkDifficulty.Code))
+            {
+                ModelState.AddModelError(nameof(walkDifficulty.Code), $"{nameof(walkDifficulty.Code)} can not be empty or white space.");
+            }
+
+            if(ModelState.ErrorCount > 0)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool ValidateUpdateWalkDifficulty(WalkDifficultyRequest walkDifficulty)
+        {
+            return ValidateAddWalkDifficulty(walkDifficulty);
         }
 
 
