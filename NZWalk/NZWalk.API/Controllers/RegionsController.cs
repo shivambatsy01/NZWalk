@@ -6,11 +6,13 @@ using NZWalk.API.Models.ResponseDTO;
 using NZWalk.API.Models.RequestsDTO;
 using NZWalk.API.Repositories.RegionRepository;
 using System.Runtime.ConstrainedExecution;
+using Microsoft.AspNetCore.Authorization;
 
 namespace NZWalk.API.Controllers
 {
     [ApiController]
     [Route("nz-regions")] //endpoint .../nz-regions/     or we can use [Route("[controller]")] -> end point will be name of controller which is 'Regions'
+    [Authorize]   //Autorise attribute can be used in Api methods itself
     public class RegionsController : Controller
     {
         private readonly IRegionRepository regionRepository;
