@@ -6,6 +6,8 @@ using NZWalk.API.Repositories.RegionRepository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using NZWalk.API.Repositories.UserRepository;
+using NZWalk.API.Repositories.TokenRepository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +33,8 @@ builder.Services.AddScoped<IRegionRepository, RegionRepository>();
 
 builder.Services.AddScoped<IWalkRepository, WalkRepository>();
 builder.Services.AddScoped<IWalkDifficultyRepository, WalkDifficultyRepository>();
+builder.Services.AddSingleton<IUserRepository, StaticUserRepository>();  //here singleton is added (static user List), if we are using with EF, then use AddScoped
+builder.Services.AddScoped<ITokenHandler, NZWalk.API.Repositories.TokenRepository.TokenHandler>();
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 //creating object wherever required for dependency injection for automapper
