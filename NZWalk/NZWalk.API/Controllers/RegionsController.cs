@@ -12,7 +12,7 @@ namespace NZWalk.API.Controllers
 {
     [ApiController]
     [Route("nz-regions")] //endpoint .../nz-regions/     or we can use [Route("[controller]")] -> end point will be name of controller which is 'Regions'
-    [Authorize]   //Autorise attribute can be used in Api methods itself
+    //[Authorize]   //Autorise attribute can be used in Api methods itself
     public class RegionsController : Controller
     {
         private readonly IRegionRepository regionRepository;
@@ -26,6 +26,7 @@ namespace NZWalk.API.Controllers
 
 
         [HttpGet]
+        [Authorize(Roles ="reader")] //it will check roles from JWT token than client has
         public async Task<IActionResult> GetAllRegionsAsync()
         {
             //if we are involving database then use
@@ -66,6 +67,7 @@ namespace NZWalk.API.Controllers
 
 
         [HttpGet]
+        [Authorize(Roles = "reader")]
         [Route("{id:guid}")]  //validation: id must be a guid
         [ActionName("GetRegionByIdAsync")] //action to pass its url anywhere
         public async Task<IActionResult> GetRegionByIdAsync(Guid id)
@@ -84,7 +86,10 @@ namespace NZWalk.API.Controllers
             
         }
 
+
+
         [HttpPost]
+        [Authorize(Roles = "writer")]
         public async Task<IActionResult> AddRegionAsync(RegionRequest addRegionRequest) //post request body parameters with auto validation by .net and automatic mapping to RegionRequst object from json format
         {
             try
@@ -105,7 +110,9 @@ namespace NZWalk.API.Controllers
             }
         }
 
+
         [HttpDelete]
+        [Authorize(Roles = "writer")]
         [Route("{id:guid}")]
         public async Task<IActionResult> DeleteRegionAsync(Guid id)
         {
@@ -125,7 +132,10 @@ namespace NZWalk.API.Controllers
             }
         }
 
+
+
         [HttpPut]
+        [Authorize(Roles = "writer")]
         [Route("{id:guid}")]
         public async Task<IActionResult> UpdateRegionAsync(Guid id, RegionRequest updateRegionRequest)
         {

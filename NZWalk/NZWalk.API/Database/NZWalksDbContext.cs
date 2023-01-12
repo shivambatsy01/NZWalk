@@ -17,9 +17,28 @@ namespace NZWalk.API.Database
         //Entity framework will create these tables on first time running (if tables doesn't exists)
         //however we have made our first migration through nuget package manager console
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            //need to create model for user_role manually as it is complex
+
+            modelBuilder.Entity<User_Roles>()
+                .HasOne(x => x.Role)  //nav prop in user_roles
+                .WithMany(y => y.UserRoles) //nav prop in Role
+                .HasForeignKey(x => x.RoleId);//foriegn key to connect with Roles table
+
+            modelBuilder.Entity<User_Roles>()
+                .HasOne(x => x.User)  //nav prop in user_roles
+                .WithMany(y => y.UserRoles)  //nav prop in User
+                .HasForeignKey(x => x.UserId); //foriegn key to connect with users table
+        }
+
+
         public DbSet<Region> Regions { get; set; }
         public DbSet<Walk> Walks { get; set; }
         public DbSet<WalkDifficulty> WalkDifficulty { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<Role> Roles { get; set; }
+        public DbSet<User_Roles> UserRoles { get; set; }
 
     }
 }

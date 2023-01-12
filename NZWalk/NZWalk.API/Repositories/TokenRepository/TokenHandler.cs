@@ -25,7 +25,7 @@ namespace NZWalk.API.Repositories.TokenRepository
 
             user.UserRoles.ForEach(role =>
             {
-                claims.Add(new Claim(ClaimTypes.Role, role));
+                claims.Add(new Claim(ClaimTypes.Role, role.Role.Name));
             });
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]));

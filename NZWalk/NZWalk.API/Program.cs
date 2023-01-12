@@ -33,7 +33,8 @@ builder.Services.AddScoped<IRegionRepository, RegionRepository>();
 
 builder.Services.AddScoped<IWalkRepository, WalkRepository>();
 builder.Services.AddScoped<IWalkDifficultyRepository, WalkDifficultyRepository>();
-builder.Services.AddSingleton<IUserRepository, StaticUserRepository>();  //here singleton is added (static user List), if we are using with EF, then use AddScoped
+//builder.Services.AddSingleton<IUserRepository, StaticUserRepository>();  //here singleton is added (static user List), if we are using with EF, then use AddScoped
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ITokenHandler, NZWalk.API.Repositories.TokenRepository.TokenHandler>();
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
