@@ -28,7 +28,7 @@ namespace NZWalk.API.Repositories.TokenRepository
                 claims.Add(new Claim(ClaimTypes.Role, role.Role.Name));
             });
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]));
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]));
             var credential = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
