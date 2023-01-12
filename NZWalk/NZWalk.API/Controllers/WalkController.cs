@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NZWalk.API.Models.Domain;
@@ -29,6 +30,7 @@ namespace NZWalk.API.Controllers
 
 
         [HttpGet]
+        [Authorize(Roles = "reader")]
         public async Task<IActionResult> GetAllWalksAsync()
         {
             try
@@ -46,6 +48,7 @@ namespace NZWalk.API.Controllers
 
 
         [HttpGet]
+        [Authorize(Roles = "reader")]
         [Route("{id:guid}")]
         [ActionName("GetWalkByIdAsync")]
         public async Task<IActionResult> GetWalkByIdAsync(Guid id)
@@ -68,6 +71,7 @@ namespace NZWalk.API.Controllers
 
 
         [HttpPost]
+        [Authorize(Roles = "writer")]
         public async Task<IActionResult> AddWalkAsync(WalkRequest walkRequest)
         {
             try
@@ -97,6 +101,7 @@ namespace NZWalk.API.Controllers
 
         [HttpDelete]
         [Route("{id:guid}")]
+        [Authorize(Roles = "writer")]
         public async Task<IActionResult> DeleteWalkAsync(Guid id)
         {
             try
@@ -118,6 +123,7 @@ namespace NZWalk.API.Controllers
 
         [HttpPut]
         [Route("{id:guid}")]
+        [Authorize(Roles = "writer")]
         public async Task<IActionResult> UpdateWalkAsync(Guid id, WalkRequest walkRequest)
         {
             try
